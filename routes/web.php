@@ -15,6 +15,12 @@ Route::get('/dashboard', function () {
 Route::middleware('auth')->group(function () {
     Route::get('/candidatures', [CandidatureController::class, 'index'])
         ->name('candidatures.index');
+    Route::get('/candidatures/create', [CandidatureController::class, 'create'])
+        ->name('candidatures.create');
+    Route::post('/candidatures', [CandidatureController::class, 'store'])
+        ->name('candidatures.store');
+    Route::get('/candidatures/{candidature}', [CandidatureController::class, 'show'])
+        ->name('candidatures.show');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
