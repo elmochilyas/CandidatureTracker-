@@ -4,12 +4,8 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    if (auth()->check()) {
-        return redirect()->route('candidatures.index');
-    }
-
-    return redirect()->route('login');
-});
+    return redirect()->route('candidatures.index');
+})->middleware('auth');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
