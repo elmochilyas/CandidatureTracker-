@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCandidatureRequest;
+use App\Http\Requests\UpdateCandidatureRequest;
 use App\Models\Candidature;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -43,5 +44,23 @@ class CandidatureController extends Controller
         $candidature->load('entretiens');
 
         return view('candidatures.show', compact('candidature'));
+    }
+
+    public function edit(Candidature $candidature): View
+    {
+        $this->authorize('update', $candidature);
+
+        return view('candidatures.edit', compact('candidature'));
+    }
+
+    public function update(UpdateCandidatureRequest $request, Candidature $candidature): RedirectResponse
+    {
+        $this->authorize('update', $candidature);
+
+        $candidature->update($request->validated());
+
+        return redirect()
+            ->route('candidatures.show', $candidature)
+            ->with('success', 'Candidature mise à jour avec succès.');
     }
 }
