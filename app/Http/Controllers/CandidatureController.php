@@ -6,15 +6,18 @@ use App\Http\Requests\StoreCandidatureRequest;
 use App\Http\Requests\UpdateCandidatureRequest;
 use App\Models\Candidature;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class CandidatureController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
         $candidatures = auth()->user()
             ->candidatures()
             ->with('entretiens')
+            ->when($request->query('status'), fn($q, $status) => $q->where('status', $status))
+            ->when($request->query('priority'), fn($q, $priority) => $q->where('priority', $priority))
             ->latest()
             ->get();
 
