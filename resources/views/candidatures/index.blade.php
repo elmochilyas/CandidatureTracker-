@@ -4,9 +4,14 @@
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('Mes candidatures') }}
             </h2>
-            <a href="{{ route('candidatures.create') }}" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700">
-                + Nouvelle candidature
-            </a>
+            <div class="flex items-center gap-4">
+                <a href="{{ route('candidatures.archived') }}" class="text-sm text-gray-600 hover:text-gray-900">
+                    Archives
+                </a>
+                <a href="{{ route('candidatures.create') }}" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700">
+                    + Nouvelle candidature
+                </a>
+            </div>
         </div>
     </x-slot>
 

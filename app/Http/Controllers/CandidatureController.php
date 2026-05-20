@@ -63,4 +63,38 @@ class CandidatureController extends Controller
             ->route('candidatures.show', $candidature)
             ->with('success', 'Candidature mise à jour avec succès.');
     }
+
+    public function destroy(Candidature $candidature): RedirectResponse
+    {
+        $this->authorize('delete', $candidature);
+
+        $candidature->delete();
+
+        return redirect()
+            ->route('candidatures.index')
+            ->with('success', 'Candidature archivée avec succès.');
+    }
+
+    public function restore(Candidature $candidature): RedirectResponse
+    {
+        $this->authorize('restore', $candidature);
+
+        $candidature->restore();
+
+        return redirect()
+            ->route('candidatures.show', $candidature)
+            ->with('success', 'Candidature restaurée avec succès.');
+    }
+
+    public function archived(): View
+    {
+        $candidatures = auth()->user()
+            ->candidatures()
+            ->onlyTrashed()
+            ->with('entretiens')
+            ->latest()
+            ->get();
+
+        return view('candidatures.archived', compact('candidatures'));
+    }
 }
