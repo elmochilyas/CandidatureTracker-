@@ -21,6 +21,10 @@ Route::middleware('auth')->group(function () {
         ->name('candidatures.store');
     Route::get('/candidatures/{candidature}', [CandidatureController::class, 'show'])
         ->name('candidatures.show');
+    Route::get('/candidatures/{candidature}/edit', [CandidatureController::class, 'edit'])
+        ->name('candidatures.edit');
+    Route::match(['put', 'patch'], '/candidatures/{candidature}', [CandidatureController::class, 'update'])
+        ->name('candidatures.update');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
