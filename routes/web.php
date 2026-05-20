@@ -19,12 +19,20 @@ Route::middleware('auth')->group(function () {
         ->name('candidatures.create');
     Route::post('/candidatures', [CandidatureController::class, 'store'])
         ->name('candidatures.store');
+    Route::get('/candidatures/archives', [CandidatureController::class, 'archived'])
+        ->name('candidatures.archived');
     Route::get('/candidatures/{candidature}', [CandidatureController::class, 'show'])
-        ->name('candidatures.show');
+        ->name('candidatures.show')
+        ->withTrashed();
     Route::get('/candidatures/{candidature}/edit', [CandidatureController::class, 'edit'])
         ->name('candidatures.edit');
     Route::match(['put', 'patch'], '/candidatures/{candidature}', [CandidatureController::class, 'update'])
         ->name('candidatures.update');
+    Route::delete('/candidatures/{candidature}', [CandidatureController::class, 'destroy'])
+        ->name('candidatures.archive');
+    Route::post('/candidatures/{candidature}/restore', [CandidatureController::class, 'restore'])
+        ->name('candidatures.restore')
+        ->withTrashed();
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
