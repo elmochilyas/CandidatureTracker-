@@ -25,6 +25,38 @@
 
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
+                    <form method="GET" action="{{ route('candidatures.index') }}" class="mb-6 flex items-end gap-4">
+                        <div>
+                            <x-input-label for="status" :value="__('Statut')" />
+                            <select id="status" name="status" class="block mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                <option value="">Tous les statuts</option>
+                                <option value="to_apply" {{ request('status') == 'to_apply' ? 'selected' : '' }}>À postuler</option>
+                                <option value="applied" {{ request('status') == 'applied' ? 'selected' : '' }}>Candidature envoyée</option>
+                                <option value="waiting" {{ request('status') == 'waiting' ? 'selected' : '' }}>En attente</option>
+                                <option value="interview_scheduled" {{ request('status') == 'interview_scheduled' ? 'selected' : '' }}>Entretien programmé</option>
+                                <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>Refus</option>
+                                <option value="accepted" {{ request('status') == 'accepted' ? 'selected' : '' }}>Acceptée</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <x-input-label for="priority" :value="__('Priorité')" />
+                            <select id="priority" name="priority" class="block mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                <option value="">Toutes les priorités</option>
+                                <option value="low" {{ request('priority') == 'low' ? 'selected' : '' }}>Basse</option>
+                                <option value="normal" {{ request('priority') == 'normal' ? 'selected' : '' }}>Normale</option>
+                                <option value="high" {{ request('priority') == 'high' ? 'selected' : '' }}>Haute</option>
+                            </select>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <x-primary-button>Filtrer</x-primary-button>
+                            @if (request('status') || request('priority'))
+                                <a href="{{ route('candidatures.index') }}" class="text-sm text-gray-600 hover:text-gray-900">Réinitialiser</a>
+                            @endif
+                        </div>
+                    </form>
+
                     @forelse ($candidatures as $candidature)
                         <a href="{{ route('candidatures.show', $candidature) }}" class="block border-b border-gray-200 py-4 last:border-b-0 hover:bg-gray-50 transition">
                             <div class="flex items-start justify-between">
