@@ -73,6 +73,16 @@
                             @if ($entretien->notes)
                                 <p class="mt-2 text-sm text-gray-500">{{ $entretien->notes }}</p>
                             @endif
+                            @unless ($candidature->trashed())
+                                <div class="mt-2 flex items-center gap-3">
+                                    <a href="{{ route('candidatures.entretiens.edit', [$candidature, $entretien]) }}" class="text-sm text-indigo-600 hover:text-indigo-900 underline">Modifier</a>
+                                    <form method="POST" action="{{ route('candidatures.entretiens.destroy', [$candidature, $entretien]) }}" class="inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" onclick="return confirm('Supprimer cet entretien ?')" class="text-sm text-red-600 hover:text-red-900 underline">Supprimer</button>
+                                    </form>
+                                </div>
+                            @endunless
                         </div>
                     </div>
                 @empty

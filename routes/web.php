@@ -36,6 +36,12 @@ Route::middleware('auth')->group(function () {
         ->withTrashed();
     Route::post('/candidatures/{candidature}/entretiens', [EntretienController::class, 'store'])
         ->name('candidatures.entretiens.store');
+    Route::get('/candidatures/{candidature}/entretiens/{entretien}/edit', [EntretienController::class, 'edit'])
+        ->name('candidatures.entretiens.edit');
+    Route::match(['put', 'patch'], '/candidatures/{candidature}/entretiens/{entretien}', [EntretienController::class, 'update'])
+        ->name('candidatures.entretiens.update');
+    Route::delete('/candidatures/{candidature}/entretiens/{entretien}', [EntretienController::class, 'destroy'])
+        ->name('candidatures.entretiens.destroy');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
