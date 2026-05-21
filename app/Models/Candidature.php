@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 
 #[Fillable([
     'user_id',
@@ -39,6 +40,15 @@ class Candidature extends Model
     public function entretiens(): HasMany
     {
         return $this->hasMany(Entretien::class);
+    }
+
+    protected static function booted(): void
+    {
+        static::forceDeleting(function (Candidature $candidature) {
+            if ($candidature->file_path && Storage::disk('public')->exists($candidature->file_path)) {
+                Storage::disk('public')->delete($candidature->file_path);
+            }
+        });
     }
 
     public function getStatusLabelAttribute(): string

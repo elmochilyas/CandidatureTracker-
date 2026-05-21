@@ -50,6 +50,14 @@
                             <dd class="mt-1 whitespace-pre-wrap">{{ $candidature->notes }}</dd>
                         </div>
                     @endif
+
+                    @if ($candidature->file_path)
+                        <div class="mt-4">
+                            <a href="{{ route('candidatures.download', $candidature) }}" class="inline-flex items-center gap-1 text-indigo-600 hover:text-indigo-900 underline">
+                                Télécharger le fichier joint
+                            </a>
+                        </div>
+                    @endif
                 </div>
             </div>
 

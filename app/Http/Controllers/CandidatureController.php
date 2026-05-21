@@ -7,7 +7,9 @@ use App\Http\Requests\UpdateCandidatureRequest;
 use App\Models\Candidature;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class CandidatureController extends Controller
 {
@@ -34,6 +36,11 @@ class CandidatureController extends Controller
         $candidature = auth()->user()->candidatures()->create(
             $request->validated()
         );
+
+        if ($request->hasFile('attachment')) {
+            $path = $request->file('attachment')->store('candidatures', 'public');
+            $candidature->update(['file_path' => $path]);
+        }
 
         return redirect()
             ->route('candidatures.show', $candidature)
@@ -62,6 +69,14 @@ class CandidatureController extends Controller
 
         $candidature->update($request->validated());
 
+        if ($request->hasFile('attachment')) {
+            if ($candidature->file_path && Storage::disk('public')->exists($candidature->file_path)) {
+                Storage::disk('public')->delete($candidature->file_path);
+            }
+            $path = $request->file('attachment')->store('candidatures', 'public');
+            $candidature->update(['file_path' => $path]);
+        }
+
         return redirect()
             ->route('candidatures.show', $candidature)
             ->with('success', 'Candidature mise à jour avec succès.');
@@ -87,6 +102,17 @@ class CandidatureController extends Controller
         return redirect()
             ->route('candidatures.show', $candidature)
             ->with('success', 'Candidature restaurée avec succès.');
+    }
+
+    public function download(Candidature $candidature): StreamedResponse
+    {
+        $this->authorize('view', $candidature);
+
+        if (!$candidature->file_path || !Storage::disk('public')->exists($candidature->file_path)) {
+            abort(404);
+        }
+
+        return Storage::disk('public')->download($candidature->file_path);
     }
 
     public function archived(): View
