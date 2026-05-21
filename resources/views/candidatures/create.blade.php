@@ -9,7 +9,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <form method="POST" action="{{ route('candidatures.store') }}" class="space-y-6">
+                    <form method="POST" action="{{ route('candidatures.store') }}" enctype="multipart/form-data" class="space-y-6">
                         @csrf
 
                         <div>
@@ -63,6 +63,12 @@
                             <x-input-label for="application_date" :value="__('Date de candidature')" />
                             <x-text-input id="application_date" class="block mt-1 w-full" type="date" name="application_date" :value="old('application_date', date('Y-m-d'))" required />
                             <x-input-error :messages="$errors->get('application_date')" class="mt-2" />
+                        </div>
+
+                        <div>
+                            <x-input-label for="attachment" :value="__('Fichier joint (optionnel)')" />
+                            <x-text-input id="attachment" class="block mt-1 w-full" type="file" name="attachment" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg" />
+                            <x-input-error :messages="$errors->get('attachment')" class="mt-2" />
                         </div>
 
                         <div class="flex items-center gap-4">

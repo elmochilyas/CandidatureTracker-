@@ -21,6 +21,7 @@ class StoreCandidatureRequest extends FormRequest
             'priority' => ['required', 'string', 'in:low,normal,high'],
             'notes' => ['nullable', 'string'],
             'application_date' => ['required', 'date', 'before_or_equal:today'],
+            'attachment' => ['nullable', 'file', 'max:10240', 'mimes:pdf,doc,docx,png,jpg,jpeg'],
         ];
     }
 }
