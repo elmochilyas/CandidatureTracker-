@@ -78,6 +78,57 @@
                 @empty
                     <p class="text-gray-500">Aucun entretien planifié pour le moment.</p>
                 @endforelse
+
+                @unless ($candidature->trashed())
+                    <div class="mt-6 border-t pt-6">
+                        <h4 class="font-medium text-gray-900 mb-4">Ajouter un entretien</h4>
+                        <form method="POST" action="{{ route('candidatures.entretiens.store', $candidature) }}" class="space-y-4">
+                            @csrf
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <x-input-label for="type" :value="__('Type')" />
+                                    <select id="type" name="type" class="block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                        <option value="phone" {{ old('type') == 'phone' ? 'selected' : '' }}>Téléphonique</option>
+                                        <option value="video" {{ old('type') == 'video' ? 'selected' : '' }}>Vidéo</option>
+                                        <option value="technical" {{ old('type') == 'technical' ? 'selected' : '' }}>Technique</option>
+                                        <option value="hr" {{ old('type') == 'hr' ? 'selected' : '' }}>RH</option>
+                                        <option value="in_person" {{ old('type') == 'in_person' ? 'selected' : '' }}>Présentiel</option>
+                                    </select>
+                                    <x-input-error :messages="$errors->get('type')" class="mt-2" />
+                                </div>
+
+                                <div>
+                                    <x-input-label for="scheduled_at" :value="__('Date et heure')" />
+                                    <x-text-input id="scheduled_at" class="block mt-1 w-full" type="datetime-local" name="scheduled_at" :value="old('scheduled_at')" required />
+                                    <x-input-error :messages="$errors->get('scheduled_at')" class="mt-2" />
+                                </div>
+                            </div>
+
+                            <div>
+                                <x-input-label for="notes" :value="__('Notes préparatoires (optionnelles)')" />
+                                <textarea id="notes" name="notes" class="block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" rows="2">{{ old('notes') }}</textarea>
+                                <x-input-error :messages="$errors->get('notes')" class="mt-2" />
+                            </div>
+
+                            <div>
+                                <x-input-label for="result" :value="__('Résultat (optionnel)')" />
+                                <select id="result" name="result" class="block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <option value="">Non défini</option>
+                                    <option value="pending" {{ old('result') == 'pending' ? 'selected' : '' }}>En attente</option>
+                                    <option value="positive" {{ old('result') == 'positive' ? 'selected' : '' }}>Positif</option>
+                                    <option value="negative" {{ old('result') == 'negative' ? 'selected' : '' }}>Négatif</option>
+                                    <option value="rescheduled" {{ old('result') == 'rescheduled' ? 'selected' : '' }}>Reporté</option>
+                                </select>
+                                <x-input-error :messages="$errors->get('result')" class="mt-2" />
+                            </div>
+
+                            <div>
+                                <x-primary-button>Ajouter l'entretien</x-primary-button>
+                            </div>
+                        </form>
+                    </div>
+                @endunless
             </div>
 
             <div class="mt-6 flex items-center gap-4">
