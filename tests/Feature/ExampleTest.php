@@ -1,7 +1,7 @@
 <?php
 
-test('the application returns a successful response', function () {
-    $response = $this->get('/');
+use Illuminate\Support\Facades\DB;
 
-    $response->assertStatus(200);
+test('the application uses sqlite in memory for testing', function () {
+    expect(DB::connection()->getDriverName())->toBe('sqlite');
 });

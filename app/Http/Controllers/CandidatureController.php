@@ -20,6 +20,9 @@ class CandidatureController extends Controller
             ->with('entretiens')
             ->when($request->query('status'), fn($q, $status) => $q->where('status', $status))
             ->when($request->query('priority'), fn($q, $priority) => $q->where('priority', $priority))
+            ->when($request->query('search'), fn($q, $s) => $q->where(function ($q) use ($s) {
+                $q->where('company_name', 'like', "%{$s}%")->orWhere('role', 'like', "%{$s}%");
+            }))
             ->latest()
             ->get();
 
