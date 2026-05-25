@@ -22,14 +22,14 @@
             @include('layouts.sidebar')
 
             <div class="lg:pl-64 relative page-enter">
-                <div class="flex items-center gap-3 px-4 sm:px-6 lg:px-8 pt-3 lg:pt-6">
-                    <button @click="$dispatch('toggle-mobile-menu')" class="lg:hidden inline-flex items-center justify-center w-10 h-10 rounded-xl text-dark-text-secondary hover:text-dark-text hover:bg-overlay-subtle focus-visible:ring-2 focus-visible:ring-dark-primary transition-all duration-200 -ml-1" aria-label="Menu">
-                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <div class="sticky top-0 z-20 flex items-center gap-3 px-4 sm:px-6 lg:px-8 py-3 bg-dark-bg/90 backdrop-blur-md border-b border-dark-border/40">
+                    <button @click="$dispatch('toggle-mobile-menu')" class="lg:hidden inline-flex items-center justify-center w-9 h-9 rounded-xl text-dark-text-secondary hover:text-dark-text hover:bg-overlay-subtle focus-visible:ring-2 focus-visible:ring-dark-primary transition-all duration-200 shrink-0" aria-label="Menu">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/>
                         </svg>
                     </button>
                     @isset($header)
-                        <div class="flex-1 lg:hidden min-w-0">
+                        <div class="flex-1 min-w-0">
                             {{ $header }}
                         </div>
                     @endisset

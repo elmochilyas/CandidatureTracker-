@@ -6,8 +6,8 @@
         </div>
     </x-slot>
 
-    <div class="py-6">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+    <div class="py-5">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <a href="{{ route('candidatures.index') }}" class="inline-flex items-center gap-1.5 text-sm text-dark-text-secondary hover:text-dark-text font-medium transition-colors mb-6">
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/></svg>
                 Retour
@@ -159,15 +159,97 @@
                                 </div>
 
                                 <div>
-                                    <x-input-label for="attachment" :value="__('Fichier joint (optionnel)')" />
-                                    <div class="mt-1.5 border-2 border-dashed border-dark-border rounded-glass-input px-4 py-5 text-center hover:border-dark-primary/40 transition-colors duration-200 cursor-pointer">
-                                        <svg class="w-7 h-7 text-dark-text-secondary/40 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"/>
-                                        </svg>
-                                        <input id="attachment" type="file" name="attachment" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg" class="block w-full text-sm text-dark-text-secondary cursor-pointer file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-medium file:bg-dark-primary/10 file:text-dark-primary hover:file:bg-dark-primary/20 transition-colors" />
-                                        <p class="mt-2 text-xs text-dark-text-secondary/60">PDF, DOC, PNG ou JPG</p>
+                                    <x-input-label for="attachments" :value="__('Fichiers joints (optionnel)')" />
+                                    <div
+                                        x-data="{
+                                            files: [],
+                                            formatSize(bytes) {
+                                                const units = ['o', 'Ko', 'Mo', 'Go'];
+                                                let i = 0;
+                                                while (bytes >= 1024 && i < units.length - 1) { bytes /= 1024; i++; }
+                                                return bytes.toFixed(i > 0 ? 1 : 0) + ' ' + units[i];
+                                            },
+                                            addFiles($event) {
+                                                const newFiles = [...$event.target.files];
+                                                for (const nf of newFiles) {
+                                                    if (!this.files.some(f => f.name === nf.name && f.size === nf.size)) {
+                                                        this.files.push(nf);
+                                                    }
+                                                }
+                                                const dt = new DataTransfer();
+                                                for (const f of this.files) dt.items.add(f);
+                                                $event.target.files = dt.files;
+                                            },
+                                            removeFile(index) {
+                                                this.files.splice(index, 1);
+                                                const dt = new DataTransfer();
+                                                const input = document.getElementById('attachments');
+                                                for (const f of this.files) dt.items.add(f);
+                                                input.files = dt.files;
+                                            },
+                                            fileIcon(file) {
+                                                if (file.type.startsWith('image/')) return 'image';
+                                                if (file.type === 'application/pdf') return 'pdf';
+                                                if (file.type.includes('word') || file.name.endsWith('.doc') || file.name.endsWith('.docx')) return 'word';
+                                                return 'file';
+                                            }
+                                        }"
+                                        class="mt-1.5"
+                                    >
+                                        <div
+                                            @dragover.prevent="$el.classList.add('border-dark-primary/40')"
+                                            @dragleave.prevent="$el.classList.remove('border-dark-primary/40')"
+                                            @drop.prevent="
+                                                $el.classList.remove('border-dark-primary/40');
+                                                const dropped = [...$event.dataTransfer.files].filter(f => ['application/pdf','application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document','image/png','image/jpeg','image/jpg'].includes(f.type) || f.name.match(/\.(pdf|doc|docx|png|jpg|jpeg)$/i));
+                                                const input = document.getElementById('attachments');
+                                                const dt = new DataTransfer();
+                                                for (const existing of input.files) dt.items.add(existing);
+                                                for (const f of dropped) dt.items.add(f);
+                                                input.files = dt.files;
+                                                files = [...input.files];
+                                            "
+                                            class="border-2 border-dashed border-dark-border rounded-glass-input px-4 py-5 text-center hover:border-dark-primary/40 transition-colors duration-200 cursor-pointer"
+                                        >
+                                            <svg class="w-7 h-7 text-dark-text-secondary/40 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"/>
+                                            </svg>
+                                            <input id="attachments" type="file" name="attachments[]" multiple accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
+                                                @change="addFiles($event)"
+                                                class="block w-full text-sm text-dark-text-secondary cursor-pointer file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-medium file:bg-dark-primary/10 file:text-dark-primary hover:file:bg-dark-primary/20 transition-colors" />
+                                            <p class="mt-2 text-xs text-dark-text-secondary/60">PDF, DOC, PNG ou JPG &mdash; glissez-déposez ou cliquez pour ajouter</p>
+                                        </div>
+
+                                        <template x-if="files.length > 0">
+                                            <div class="mt-3 space-y-2">
+                                                <template x-for="(file, index) in files" :key="index">
+                                                    <div class="flex items-center gap-3 px-3 py-2.5 bg-overlay-subtle rounded-lg border border-dark-border">
+                                                        <template x-if="fileIcon(file) === 'pdf'">
+                                                            <svg class="w-5 h-5 text-dark-danger shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
+                                                        </template>
+                                                        <template x-if="fileIcon(file) === 'image'">
+                                                            <svg class="w-5 h-5 text-emerald-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0022.5 18.75V5.25A2.25 2.25 0 0020.25 3H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21z"/></svg>
+                                                        </template>
+                                                        <template x-if="fileIcon(file) === 'word'">
+                                                            <svg class="w-5 h-5 text-blue-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
+                                                        </template>
+                                                        <template x-if="fileIcon(file) === 'file'">
+                                                            <svg class="w-5 h-5 text-dark-text-secondary shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 9.776c.112-.017.227-.026.344-.026h15.812c.117 0 .232.009.344.026m-16.5 0a2.25 2.25 0 00-1.883 2.542l.857 6a2.25 2.25 0 002.227 1.932H19.05a2.25 2.25 0 002.227-1.932l.857-6a2.25 2.25 0 00-1.883-2.542m-16.5 0V6A2.25 2.25 0 016 3.75h3.879a1.5 1.5 0 011.06.44l2.122 2.12a1.5 1.5 0 001.06.44H18A2.25 2.25 0 0120.25 9v.776"/></svg>
+                                                        </template>
+                                                        <div class="flex-1 min-w-0">
+                                                            <p class="text-sm font-medium text-dark-text truncate" x-text="file.name"></p>
+                                                            <p class="text-xs text-dark-text-secondary" x-text="formatSize(file.size)"></p>
+                                                        </div>
+                                                        <button type="button" @click="removeFile(index)" class="shrink-0 p-1 rounded-lg hover:bg-dark-danger/10 text-dark-text-secondary hover:text-dark-danger transition-colors">
+                                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                                                        </button>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </template>
                                     </div>
-                                    <x-input-error :messages="$errors->get('attachment')" class="mt-1.5" />
+                                    <x-input-error :messages="$errors->get('attachments')" class="mt-1.5" />
+                                    <x-input-error :messages="$errors->get('attachments.*')" class="mt-1.5" />
                                 </div>
                             </div>
                         </div>

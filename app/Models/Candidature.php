@@ -19,7 +19,6 @@ use Illuminate\Support\Facades\Storage;
     'priority',
     'notes',
     'application_date',
-    'file_path',
 ])]
 class Candidature extends Model
 {
@@ -42,12 +41,20 @@ class Candidature extends Model
         return $this->hasMany(Entretien::class);
     }
 
+    public function attachments(): HasMany
+    {
+        return $this->hasMany(Attachment::class);
+    }
+
     protected static function booted(): void
     {
         static::forceDeleting(function (Candidature $candidature) {
-            if ($candidature->file_path && Storage::disk('public')->exists($candidature->file_path)) {
-                Storage::disk('public')->delete($candidature->file_path);
+            foreach ($candidature->attachments as $attachment) {
+                if (Storage::disk('public')->exists($attachment->file_path)) {
+                    Storage::disk('public')->delete($attachment->file_path);
+                }
             }
+            $candidature->attachments()->delete();
         });
     }
 

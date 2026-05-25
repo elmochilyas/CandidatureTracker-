@@ -6,8 +6,8 @@
         </div>
     </x-slot>
 
-    <div class="py-6">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-5">
+    <div class="py-5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-5">
 
             @php
                 $months = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
@@ -183,14 +183,14 @@
                                 $responded = $stats['accepted'] + $stats['rejected'];
                                 $successRate = $responded > 0 ? round(($stats['accepted'] / $responded) * 100) : 0;
                             @endphp
-                            <div class="mt-6 pt-4 border-t border-dark-border flex items-center gap-3">
-                                <div class="flex-1 p-3 rounded-xl bg-emerald-500/8 border border-emerald-500/15">
+                            <div class="mt-6 pt-4 border-t border-dark-border grid grid-cols-2 gap-3">
+                                <div class="p-3 rounded-xl bg-emerald-500/8 border border-emerald-500/15">
                                     <p class="text-xs text-dark-text-secondary">Taux de succès</p>
-                                    <p class="text-lg font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">{{ $successRate }}%</p>
+                                    <p class="text-xl font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">{{ $successRate }}%</p>
                                 </div>
-                                <div class="flex-1 p-3 rounded-xl bg-overlay-subtle border border-dark-border">
+                                <div class="p-3 rounded-xl bg-overlay-subtle border border-dark-border">
                                     <p class="text-xs text-dark-text-secondary">Réponses reçues</p>
-                                    <p class="text-lg font-bold text-dark-text mt-0.5">{{ $responded }} / {{ $stats['total'] }}</p>
+                                    <p class="text-xl font-bold text-dark-text mt-0.5">{{ $responded }}<span class="text-sm font-normal text-dark-text-secondary"> / {{ $stats['total'] }}</span></p>
                                 </div>
                             </div>
                         @endif

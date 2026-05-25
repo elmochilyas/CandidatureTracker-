@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCandidatureRequest;
 use App\Http\Requests\UpdateCandidatureRequest;
+use App\Models\Attachment;
 use App\Models\Candidature;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -17,7 +18,7 @@ class CandidatureController extends Controller
     {
         $candidatures = auth()->user()
             ->candidatures()
-            ->with('entretiens')
+            ->with('entretiens', 'attachments')
             ->when($request->query('status'), fn($q, $status) => $q->where('status', $status))
             ->when($request->query('priority'), fn($q, $priority) => $q->where('priority', $priority))
             ->when($request->query('search'), fn($q, $s) => $q->where(function ($q) use ($s) {
@@ -40,9 +41,16 @@ class CandidatureController extends Controller
             $request->validated()
         );
 
-        if ($request->hasFile('attachment')) {
-            $path = $request->file('attachment')->store('candidatures', 'public');
-            $candidature->update(['file_path' => $path]);
+        if ($request->hasFile('attachments')) {
+            foreach ($request->file('attachments') as $file) {
+                $path = $file->store('candidatures', 'public');
+                $candidature->attachments()->create([
+                    'file_path' => $path,
+                    'original_name' => $file->getClientOriginalName(),
+                    'file_size' => $file->getSize(),
+                    'mime_type' => $file->getMimeType(),
+                ]);
+            }
         }
 
         return redirect()
@@ -54,7 +62,7 @@ class CandidatureController extends Controller
     {
         $this->authorize('view', $candidature);
 
-        $candidature->load('entretiens');
+        $candidature->load('entretiens', 'attachments');
 
         return view('candidatures.show', compact('candidature'));
     }
@@ -62,6 +70,8 @@ class CandidatureController extends Controller
     public function edit(Candidature $candidature): View
     {
         $this->authorize('update', $candidature);
+
+        $candidature->load('attachments');
 
         return view('candidatures.edit', compact('candidature'));
     }
@@ -72,12 +82,16 @@ class CandidatureController extends Controller
 
         $candidature->update($request->validated());
 
-        if ($request->hasFile('attachment')) {
-            if ($candidature->file_path && Storage::disk('public')->exists($candidature->file_path)) {
-                Storage::disk('public')->delete($candidature->file_path);
+        if ($request->hasFile('attachments')) {
+            foreach ($request->file('attachments') as $file) {
+                $path = $file->store('candidatures', 'public');
+                $candidature->attachments()->create([
+                    'file_path' => $path,
+                    'original_name' => $file->getClientOriginalName(),
+                    'file_size' => $file->getSize(),
+                    'mime_type' => $file->getMimeType(),
+                ]);
             }
-            $path = $request->file('attachment')->store('candidatures', 'public');
-            $candidature->update(['file_path' => $path]);
         }
 
         return redirect()
@@ -111,11 +125,43 @@ class CandidatureController extends Controller
     {
         $this->authorize('view', $candidature);
 
-        if (!$candidature->file_path || !Storage::disk('public')->exists($candidature->file_path)) {
+        $attachment = $candidature->attachments()->first();
+
+        if (!$attachment || !Storage::disk('public')->exists($attachment->file_path)) {
             abort(404);
         }
 
-        return Storage::disk('public')->download($candidature->file_path);
+        return Storage::disk('public')->download($attachment->file_path, $attachment->original_name);
+    }
+
+    public function downloadAttachment(Candidature $candidature, Attachment $attachment): StreamedResponse
+    {
+        $this->authorize('view', $candidature);
+
+        abort_if($attachment->candidature_id !== $candidature->id, 404);
+
+        if (!Storage::disk('public')->exists($attachment->file_path)) {
+            abort(404);
+        }
+
+        return Storage::disk('public')->download($attachment->file_path, $attachment->original_name);
+    }
+
+    public function destroyAttachment(Request $request, Candidature $candidature, Attachment $attachment): RedirectResponse
+    {
+        $this->authorize('update', $candidature);
+
+        abort_if($attachment->candidature_id !== $candidature->id, 404);
+
+        if (Storage::disk('public')->exists($attachment->file_path)) {
+            Storage::disk('public')->delete($attachment->file_path);
+        }
+
+        $attachment->delete();
+
+        return redirect()
+            ->back()
+            ->with('success', 'Fichier supprimé avec succès.');
     }
 
     public function archived(): View
@@ -123,7 +169,7 @@ class CandidatureController extends Controller
         $candidatures = auth()->user()
             ->candidatures()
             ->onlyTrashed()
-            ->with('entretiens')
+            ->with('entretiens', 'attachments')
             ->latest()
             ->get();
 

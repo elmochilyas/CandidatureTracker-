@@ -6,8 +6,8 @@
         </div>
     </x-slot>
 
-    <div class="py-6">
-        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8 space-y-4">
+    <div class="py-5">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
 
             {{-- Back link --}}
             <a href="{{ route('candidatures.show', $candidature) }}" class="inline-flex items-center gap-1.5 text-sm text-dark-text-secondary hover:text-dark-text font-medium transition-colors">

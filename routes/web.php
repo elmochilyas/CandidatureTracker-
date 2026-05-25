@@ -59,6 +59,10 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/candidatures/{candidature}/download', [CandidatureController::class, 'download'])
         ->name('candidatures.download');
+    Route::get('/candidatures/{candidature}/attachments/{attachment}/download', [CandidatureController::class, 'downloadAttachment'])
+        ->name('candidatures.attachments.download');
+    Route::delete('/candidatures/{candidature}/attachments/{attachment}', [CandidatureController::class, 'destroyAttachment'])
+        ->name('candidatures.attachments.destroy');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

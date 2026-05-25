@@ -6,8 +6,8 @@
         </div>
     </x-slot>
 
-    <div class="py-6">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-5">
+    <div class="py-5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-5">
 
             @if (session('success'))
                 <div class="flex items-center gap-2.5 p-4 rounded-glass-input bg-dark-success/10 border border-dark-success/20 text-sm text-dark-success shadow-sm animate-scale-in">
@@ -213,9 +213,9 @@
                         @endphp
 
                         <a href="{{ route('candidatures.show', $candidature) }}"
-                           class="group flex items-center gap-3 sm:gap-4 px-4 sm:px-5 py-4 hover:bg-overlay-subtle transition-colors duration-150 {{ $candidature->priority === 'high' ? 'border-l-2 border-l-dark-danger' : '' }}">
+                           class="group flex items-center gap-3 sm:gap-4 px-4 sm:px-5 py-3.5 hover:bg-overlay-subtle transition-colors duration-150 {{ $candidature->priority === 'high' ? 'border-l-2 border-l-dark-danger' : '' }}">
 
-                            <div class="shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br {{ $avatarGradient }} flex items-center justify-center text-white font-bold text-sm shadow-sm group-hover:scale-105 transition-transform duration-200">
+                            <div class="shrink-0 w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br {{ $avatarGradient }} flex items-center justify-center text-white font-bold text-sm shadow-sm group-hover:scale-105 transition-transform duration-200">
                                 {{ $initial }}
                             </div>
 
@@ -234,6 +234,12 @@
                                     @endif
                                 </div>
                                 <p class="text-xs text-dark-text-secondary truncate">{{ $candidature->role }}</p>
+                                <div class="sm:hidden mt-1">
+                                    <span class="badge badge-status {{ $statusStyle }}">
+                                        <span class="dot"></span>
+                                        {{ $candidature->status_label }}
+                                    </span>
+                                </div>
                             </div>
 
                             <div class="hidden sm:block shrink-0">
@@ -258,11 +264,12 @@
                                     {{ $candidature->entretiens->count() }}
                                 </span>
 
-                                @if ($candidature->file_path)
-                                    <span class="flex items-center text-dark-success" title="Fichier joint">
+                                @if ($candidature->attachments->isNotEmpty())
+                                    <span class="flex items-center text-dark-success relative" title="{{ $candidature->attachments->count() }} fichier(s) joint(s)">
                                         <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"/>
                                         </svg>
+                                        <span class="absolute -top-1.5 -right-1.5 w-3.5 h-3.5 rounded-full bg-dark-success text-[9px] font-bold text-white flex items-center justify-center">{{ $candidature->attachments->count() }}</span>
                                     </span>
                                 @endif
                             </div>

@@ -344,7 +344,7 @@
 @layer utilities {
     .stat-card {
         background: var(--stat-bg, transparent);
-        border-color: var(--stat-border, transparent);
+        border: 1px solid var(--stat-border, transparent);
     }
 
     .stat-number {
@@ -432,8 +432,8 @@
 .status-archived  { --badge-bg: rgba(156,163,175,.08); --badge-text: #6b7280; --badge-border: rgba(156,163,175,.2); --dot: #9ca3af; }
 
 /* ─── Stat card number colors ──────────────────────────── */
-.stat-applied   { --stat-text: #3b82f6; }
-.stat-technical { --stat-text: #d97706; }
-.stat-interview { --stat-text: #7c3aed; }
-.stat-accepted  { --stat-text: #16a34a; }
-.stat-rejected  { --stat-text: #ef4444; }
+.stat-applied   { --stat-text: #3b82f6; --stat-bg: rgba(59,130,246,.04); --stat-border: rgba(59,130,246,.12); }
+.stat-technical { --stat-text: #d97706; --stat-bg: rgba(245,158,11,.04); --stat-border: rgba(245,158,11,.12); }
+.stat-interview { --stat-text: #7c3aed; --stat-bg: rgba(139,92,246,.04); --stat-border: rgba(139,92,246,.12); }
+.stat-accepted  { --stat-text: #16a34a; --stat-bg: rgba(34,197,94,.04); --stat-border: rgba(34,197,94,.12); }
+.stat-rejected  { --stat-text: #ef4444; --stat-bg: rgba(239,68,68,.04); --stat-border: rgba(239,68,68,.12); }

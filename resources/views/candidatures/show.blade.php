@@ -6,8 +6,8 @@
         </div>
     </x-slot>
 
-    <div class="py-6">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+    <div class="py-5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-5">
 
             {{-- Back link --}}
             <a href="{{ route('candidatures.index') }}" class="inline-flex items-center gap-1.5 text-sm text-dark-text-secondary hover:text-dark-text font-medium transition-colors">
@@ -62,7 +62,7 @@
                     {{-- Hero header row --}}
                                 <div class="flex flex-col sm:flex-row sm:items-start gap-5">
                         {{-- Avatar --}}
-                        <div class="shrink-0 w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br {{ $avatarGradient }} flex items-center justify-center text-white font-bold-xl sm:text-2xl shadow-glow">
+                        <div class="shrink-0 w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br {{ $avatarGradient }} flex items-center justify-center text-white text-xl font-bold sm:text-2xl shadow-glow">
                             {{ $initial }}
                         </div>
 
@@ -127,7 +127,7 @@
                     </div>
 
                     {{-- Meta info grid below divider --}}
-                    @if ($candidature->offer_url || $candidature->file_path)
+                    @if ($candidature->offer_url || $candidature->attachments->isNotEmpty())
                         <div class="mt-6 pt-6 border-t border-dark-border flex flex-wrap gap-4">
                             @if ($candidature->offer_url)
                                 <div class="flex items-center gap-3 px-4 py-2.5 rounded-glass-input bg-overlay-subtle border border-dark-border">
@@ -143,16 +143,27 @@
                                 </div>
                             @endif
 
-                            @if ($candidature->file_path)
-                                <a href="{{ route('candidatures.download', $candidature) }}" class="flex items-center gap-3 px-4 py-2.5 rounded-glass-input bg-overlay-subtle border border-dark-border hover:bg-overlay-hover hover:text-dark-text transition-colors">
-                                    <div class="w-7 h-7 rounded-lg bg-violet-500/10 flex items-center justify-center shrink-0">
-                                        <svg class="w-3.5 h-3.5 text-violet-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/>
-                                        </svg>
+                            @foreach ($candidature->attachments as $attachment)
+                                @php $icon = $attachment->icon; @endphp
+                                <a href="{{ route('candidatures.attachments.download', [$candidature, $attachment]) }}" class="flex items-center gap-3 px-4 py-2.5 rounded-glass-input bg-overlay-subtle border border-dark-border hover:bg-overlay-hover transition-colors group min-w-0">
+                                    <div class="w-7 h-7 rounded-lg {{ $icon === 'pdf' ? 'bg-red-500/10' : ($icon === 'image' ? 'bg-emerald-500/10' : ($icon === 'word' ? 'bg-blue-500/10' : 'bg-violet-500/10')) }} flex items-center justify-center shrink-0">
+                                        @if ($icon === 'pdf')
+                                            <svg class="w-3.5 h-3.5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
+                                        @elseif ($icon === 'image')
+                                            <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0022.5 18.75V5.25A2.25 2.25 0 0020.25 3H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21z"/></svg>
+                                        @elseif ($icon === 'word')
+                                            <svg class="w-3.5 h-3.5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
+                                        @else
+                                            <svg class="w-3.5 h-3.5 text-violet-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 9.776c.112-.017.227-.026.344-.026h15.812c.117 0 .232.009.344.026m-16.5 0a2.25 2.25 0 00-1.883 2.542l.857 6a2.25 2.25 0 002.227 1.932H19.05a2.25 2.25 0 002.227-1.932l.857-6a2.25 2.25 0 00-1.883-2.542m-16.5 0V6A2.25 2.25 0 016 3.75h3.879a1.5 1.5 0 011.06.44l2.122 2.12a1.5 1.5 0 001.06.44H18A2.25 2.25 0 0120.25 9v.776"/></svg>
+                                        @endif
                                     </div>
-                                    <span class="text-sm font-medium text-dark-text-secondary">Télécharger le fichier joint</span>
+                                    <div class="min-w-0">
+                                        <span class="text-sm font-medium text-dark-text-secondary group-hover:text-dark-text transition-colors block truncate">{{ $attachment->original_name }}</span>
+                                        <span class="text-xs text-dark-text-secondary/60">{{ $attachment->size_for_humans }}</span>
+                                    </div>
+                                    <svg class="w-3.5 h-3.5 text-dark-text-secondary/40 group-hover:text-dark-primary shrink-0 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
                                 </a>
-                            @endif
+                            @endforeach
                         </div>
                     @endif
 
