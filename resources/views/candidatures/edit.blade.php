@@ -29,6 +29,54 @@
                 </div>
 
                 <div class="p-6 sm:p-8">
+                    @if ($candidature->attachments->isNotEmpty())
+                        <div class="mb-6">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
+                                    <svg class="w-4 h-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/>
+                                    </svg>
+                                </div>
+                                <h4 class="text-sm font-semibold text-dark-text">Fichiers joints</h4>
+                                <div class="flex-1 h-px bg-dark-border"></div>
+                            </div>
+                            <div class="space-y-2">
+                                @foreach ($candidature->attachments as $attachment)
+                                    <div class="flex items-center gap-3 px-3 py-2.5 bg-overlay-subtle rounded-lg border border-dark-border group">
+                                        @php
+                                            $icon = $attachment->icon;
+                                        @endphp
+                                        @if ($icon === 'pdf')
+                                            <svg class="w-5 h-5 text-dark-danger shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
+                                        @elseif ($icon === 'image')
+                                            <svg class="w-5 h-5 text-emerald-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0022.5 18.75V5.25A2.25 2.25 0 0020.25 3H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21z"/></svg>
+                                        @elseif ($icon === 'word')
+                                            <svg class="w-5 h-5 text-blue-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
+                                        @else
+                                            <svg class="w-5 h-5 text-dark-text-secondary shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 9.776c.112-.017.227-.026.344-.026h15.812c.117 0 .232.009.344.026m-16.5 0a2.25 2.25 0 00-1.883 2.542l.857 6a2.25 2.25 0 002.227 1.932H19.05a2.25 2.25 0 002.227-1.932l.857-6a2.25 2.25 0 00-1.883-2.542m-16.5 0V6A2.25 2.25 0 016 3.75h3.879a1.5 1.5 0 011.06.44l2.122 2.12a1.5 1.5 0 001.06.44H18A2.25 2.25 0 0120.25 9v.776"/></svg>
+                                        @endif
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium text-dark-text truncate">{{ $attachment->original_name }}</p>
+                                            <p class="text-xs text-dark-text-secondary">{{ $attachment->size_for_humans }}</p>
+                                        </div>
+                                        <div class="flex items-center gap-1 shrink-0 opacity-60 group-hover:opacity-100 transition-opacity">
+                                            <a href="{{ route('candidatures.attachments.download', [$candidature, $attachment]) }}" class="p-1.5 rounded-lg hover:bg-dark-primary/10 text-dark-text-secondary hover:text-dark-primary transition-colors" title="Télécharger">
+                                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+                                            </a>
+                                            <form method="POST" action="{{ route('candidatures.attachments.destroy', [$candidature, $attachment]) }}" class="inline" onsubmit="return confirm('Supprimer ce fichier ?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="p-1.5 rounded-lg hover:bg-dark-danger/10 text-dark-text-secondary hover:text-dark-danger transition-colors" title="Supprimer">
+                                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+
                     <form method="POST" action="{{ route('candidatures.update', $candidature) }}" enctype="multipart/form-data" class="space-y-8">
                         @csrf
                         @method('PUT')
@@ -160,44 +208,7 @@
                                 </div>
 
                                 <div>
-                                    <x-input-label for="attachments" :value="__('Fichiers joints (optionnel)')" />
-
-                                    @if ($candidature->attachments->isNotEmpty())
-                                        <div class="mt-1.5 mb-3 space-y-2">
-                                            @foreach ($candidature->attachments as $attachment)
-                                                <div class="flex items-center gap-3 px-3 py-2.5 bg-overlay-subtle rounded-lg border border-dark-border group">
-                                                    @php
-                                                        $icon = $attachment->icon;
-                                                    @endphp
-                                                    @if ($icon === 'pdf')
-                                                        <svg class="w-5 h-5 text-dark-danger shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
-                                                    @elseif ($icon === 'image')
-                                                        <svg class="w-5 h-5 text-emerald-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0022.5 18.75V5.25A2.25 2.25 0 0020.25 3H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21z"/></svg>
-                                                    @elseif ($icon === 'word')
-                                                        <svg class="w-5 h-5 text-blue-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
-                                                    @else
-                                                        <svg class="w-5 h-5 text-dark-text-secondary shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 9.776c.112-.017.227-.026.344-.026h15.812c.117 0 .232.009.344.026m-16.5 0a2.25 2.25 0 00-1.883 2.542l.857 6a2.25 2.25 0 002.227 1.932H19.05a2.25 2.25 0 002.227-1.932l.857-6a2.25 2.25 0 00-1.883-2.542m-16.5 0V6A2.25 2.25 0 016 3.75h3.879a1.5 1.5 0 011.06.44l2.122 2.12a1.5 1.5 0 001.06.44H18A2.25 2.25 0 0120.25 9v.776"/></svg>
-                                                    @endif
-                                                    <div class="flex-1 min-w-0">
-                                                        <p class="text-sm font-medium text-dark-text truncate">{{ $attachment->original_name }}</p>
-                                                        <p class="text-xs text-dark-text-secondary">{{ $attachment->size_for_humans }}</p>
-                                                    </div>
-                                                    <div class="flex items-center gap-1 shrink-0 opacity-60 group-hover:opacity-100 transition-opacity">
-                                                        <a href="{{ route('candidatures.attachments.download', [$candidature, $attachment]) }}" class="p-1.5 rounded-lg hover:bg-dark-primary/10 text-dark-text-secondary hover:text-dark-primary transition-colors" title="Télécharger">
-                                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
-                                                        </a>
-                                                        <form method="POST" action="{{ route('candidatures.attachments.destroy', [$candidature, $attachment]) }}" class="inline" onsubmit="return confirm('Supprimer ce fichier ?')">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit" class="p-1.5 rounded-lg hover:bg-dark-danger/10 text-dark-text-secondary hover:text-dark-danger transition-colors" title="Supprimer">
-                                                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
-                                                            </button>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            @endforeach
-                                        </div>
-                                    @endif
+                                    <x-input-label for="edit_attachments" :value="__('Ajouter des fichiers (optionnel)')" />
 
                                     <div
                                         x-data="{

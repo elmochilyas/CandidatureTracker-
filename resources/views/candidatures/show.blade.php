@@ -318,15 +318,18 @@
                                             <option value="hr">RH</option>
                                             <option value="in_person">Présentiel</option>
                                         </x-select-input>
+                                        <x-input-error :messages="$errors->get('type')" class="mt-1.5" />
                                     </div>
                                     <div>
                                         <x-input-label for="scheduled_at" :value="__('Date et heure *')" />
                                         <x-text-input id="scheduled_at" class="block w-full mt-1.5" type="datetime-local" name="scheduled_at" required />
+                                        <x-input-error :messages="$errors->get('scheduled_at')" class="mt-1.5" />
                                     </div>
                                 </div>
                                 <div>
-                                    <x-input-label for="add_notes" :value="__('Notes (optionnelles)')" />
+                                        <x-input-label for="add_notes" :value="__('Notes (optionnelles)')" />
                                     <textarea id="add_notes" name="notes" class="block mt-1.5 w-full rounded-glass-input bg-dark-surface border border-dark-border px-4 py-2.5 text-sm text-dark-text placeholder-dark-text-secondary/50 focus:outline-none focus:border-dark-primary-hover focus:ring-2 focus:ring-dark-primary-hover/20 transition-all duration-200" rows="2" placeholder="Sujets à aborder, questions préparées..."></textarea>
+                                    <x-input-error :messages="$errors->get('notes')" class="mt-1.5" />
                                 </div>
                                 <div>
                                     <x-input-label for="result" :value="__('Résultat (optionnel)')" />
@@ -337,6 +340,7 @@
                                         <option value="negative">Négatif</option>
                                         <option value="rescheduled">Reporté</option>
                                     </x-select-input>
+                                    <x-input-error :messages="$errors->get('result')" class="mt-1.5" />
                                 </div>
                                 <div class="pt-2">
                                     <x-primary-button>

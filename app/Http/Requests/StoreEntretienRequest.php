@@ -15,7 +15,7 @@ class StoreEntretienRequest extends FormRequest
     {
         return [
             'type' => ['required', 'string', 'in:phone,video,technical,hr,in_person'],
-            'scheduled_at' => ['required', 'date', 'after:today'],
+            'scheduled_at' => ['required', 'date'],
             'notes' => ['nullable', 'string'],
             'result' => ['nullable', 'string', 'in:pending,positive,negative,rescheduled'],
         ];

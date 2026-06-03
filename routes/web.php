@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CandidatureController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EntretienController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -9,23 +10,8 @@ Route::get('/', function () {
     return redirect()->route('candidatures.index');
 })->middleware('auth');
 
-Route::get('/dashboard', function () {
-    $allCandidatures = auth()->user()->candidatures()->with('entretiens')->get();
-    $recentCandidatures = $allCandidatures->sortByDesc('created_at')->take(5);
-
-    $stats = [
-        'total'      => $allCandidatures->count(),
-        'toApply'    => $allCandidatures->where('status', 'to_apply')->count(),
-        'applied'    => $allCandidatures->where('status', 'applied')->count(),
-        'waiting'    => $allCandidatures->where('status', 'waiting')->count(),
-        'inProgress' => $allCandidatures->whereIn('status', ['applied', 'waiting'])->count(),
-        'interviews' => $allCandidatures->where('status', 'interview_scheduled')->count(),
-        'accepted'   => $allCandidatures->where('status', 'accepted')->count(),
-        'rejected'   => $allCandidatures->where('status', 'rejected')->count(),
-    ];
-
-    return view('dashboard', compact('stats', 'recentCandidatures'));
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/candidatures', [CandidatureController::class, 'index'])
